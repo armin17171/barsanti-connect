@@ -4,7 +4,17 @@
 
 {% block content %}
 <section class="card profile-head">
+  {% if current_user and current_user.id == profile_user.id %}
+  <form method="post" action="/me/avatar" enctype="multipart/form-data" id="avatarForm">
+    <label class="avatar-clickable" title="Cambia foto profilo">
+      {{ avatar(profile_user, 'big') }}
+      <span class="avatar-cam">📷</span>
+      <input type="file" name="avatar" accept="image/*" hidden id="profileAvatarInput">
+    </label>
+  </form>
+  {% else %}
   {{ avatar(profile_user, 'big') }}
+  {% endif %}
   <h1>@{{ profile_user.username }}
     {% if profile_user.is_admin %}<span class="badge">admin</span>{% endif %}
     {% if profile_user.is_banned %}<span class="badge danger">bannato</span>{% endif %}

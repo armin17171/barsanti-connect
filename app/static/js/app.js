@@ -176,11 +176,21 @@
     });
   })();
 
+  // ---------- Gestione media: UN SOLO audio/video alla volta ----------
+  // Ogni elemento registra il proprio <media> qui; quando uno parte, gli altri si fermano.
+  var mediaElements = [];
+  function stopOthers(except) {
+    mediaElements.forEach(function (m) {
+      if (m !== except && !m.paused) m.pause();
+    });
+  }
+
   // ---------- Player audio con onde ----------
   document.querySelectorAll(".js-audio").forEach(function (player) {
     var src = player.dataset.src;
     var audio = new Audio();
     audio.src = src; audio.preload = "metadata";
+    mediaElements.push(audio);
     var playBtn = player.querySelector(".ap-play");
     var wave = player.querySelector(".ap-wave");
     var timeEl = player.querySelector(".ap-time");
@@ -200,7 +210,10 @@
     playBtn.addEventListener("click", function () {
       if (audio.paused) audio.play(); else audio.pause();
     });
-    audio.addEventListener("play", function () { playBtn.textContent = "⏸"; player.classList.add("playing"); });
+    audio.addEventListener("play", function () {
+      stopOthers(audio);
+      playBtn.textContent = "⏸"; player.classList.add("playing");
+    });
     audio.addEventListener("pause", function () { playBtn.textContent = "▶"; player.classList.remove("playing"); });
     audio.addEventListener("ended", function () { playBtn.textContent = "▶"; player.classList.remove("playing"); });
     audio.addEventListener("loadedmetadata", function () { timeEl.textContent = fmt(audio.duration); });
@@ -215,6 +228,35 @@
       if (audio.duration) audio.currentTime = ((e.clientX - rect.left) / rect.width) * audio.duration;
     });
   });
+
+  // ---------- Video: partono solo quando sono in vista, si fermano se scrolli via ----------
+  var videos = document.querySelectorAll(".js-post-video");
+  videos.forEach(function (v) {
+    mediaElements.push(v);
+    // quando l'utente avvia un video, ferma tutti gli altri media
+    v.addEventListener("play", function () { stopOthers(v); });
+  });
+  if (videos.length && "IntersectionObserver" in window) {
+    var vio = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        var v = entry.target;
+        if (entry.isIntersecting && entry.intersectionRatio >= 0.6) {
+          v.play().catch(function () {});   // riprende quando lo guardi
+        } else if (!v.paused) {
+          v.pause();                         // si ferma (e l'audio con esso) se scrolli via
+        }
+      });
+    }, { threshold: [0, 0.6, 1] });
+    videos.forEach(function (v) { vio.observe(v); });
+  }
+
+  // ---------- Cambio avatar dal profilo: invio automatico al click sul cerchio ----------
+  var profileAvatarInput = document.getElementById("profileAvatarInput");
+  if (profileAvatarInput) {
+    profileAvatarInput.addEventListener("change", function () {
+      if (profileAvatarInput.files.length) document.getElementById("avatarForm").submit();
+    });
+  }
 
   // ---------- Registrazione service worker (PWA installabile) ----------
   if ("serviceWorker" in navigator) {

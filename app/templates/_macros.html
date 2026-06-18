@@ -31,7 +31,7 @@
   {% if post.media_path %}
     <div class="post-media">
       {% if post.media_kind == 'video' %}
-        <video src="/media/{{ post.media_path }}" autoplay loop muted playsinline controls preload="metadata"></video>
+        <video class="js-post-video" src="/media/{{ post.media_path }}" loop muted playsinline controls preload="metadata"></video>
       {% elif post.media_kind == 'audio' %}
         <div class="audio-player js-audio" data-src="/media/{{ post.media_path }}">
           <button class="ap-play" type="button" aria-label="Riproduci">▶</button>

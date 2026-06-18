@@ -275,6 +275,8 @@ textarea.js-autogrow { resize: none; overflow: hidden; min-height: 46px; }
   border-radius: 12px; box-shadow: var(--shadow); padding: 6px;
   display: flex; flex-direction: column; gap: 2px; min-width: 140px;
 }
+/* l'attributo hidden deve avere la priorità sul display:flex qui sopra */
+.media-options[hidden] { display: none; }
 .media-options button {
   background: none; border: none; text-align: left; padding: 9px 11px;
   border-radius: 8px; cursor: pointer; color: var(--text); font: inherit;
@@ -329,6 +331,25 @@ textarea.js-autogrow { resize: none; overflow: hidden; min-height: 46px; }
   background: linear-gradient(135deg, var(--primary), var(--primary-2));
 }
 .cal-event:hover { text-decoration: none; }
+
+/* ---------- Avatar nell'app bar ---------- */
+.appbar-avatar {
+  display: inline-flex; width: 36px; height: 36px; border-radius: 50%;
+  overflow: hidden; border: 1px solid var(--border); flex: 0 0 auto;
+}
+.appbar-avatar:hover { text-decoration: none; filter: brightness(1.05); }
+.appbar-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.appbar-avatar .avatar { width: 100%; height: 100%; }
+
+/* ---------- Cerchio profilo cliccabile per cambiare foto ---------- */
+.avatar-clickable { position: relative; display: inline-block; cursor: pointer; }
+.avatar-cam {
+  position: absolute; right: -2px; bottom: -2px;
+  width: 26px; height: 26px; border-radius: 50%;
+  background: var(--surface); border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: .8rem; box-shadow: var(--shadow);
+}
 
 @media (min-width: 720px) {
   .content { max-width: 680px; }

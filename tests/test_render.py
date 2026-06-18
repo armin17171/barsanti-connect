@@ -16,12 +16,28 @@ def test_calendar_grid_renders(client):
     assert "Lun" in page and "Dom" in page
 
 
-def test_settings_has_avatar_and_autogrow(client):
+def test_settings_has_username_and_password_confirm(client):
     register(client, "render_set")
     page = client.get("/settings").text
-    assert 'name="avatar"' in page
+    assert 'name="username"' in page
+    assert 'name="confirm_new_password"' in page
     assert "js-autogrow" in page
     assert "js-pwd-toggle" in page
+    # l'avatar NON è più nelle impostazioni
+    assert 'name="avatar"' not in page
+
+
+def test_profile_own_has_avatar_uploader(client):
+    register(client, "render_prof")
+    page = client.get("/u/render_prof").text
+    assert "profileAvatarInput" in page          # clic sul cerchio per cambiare foto
+    assert 'action="/me/avatar"' in page
+
+
+def test_appbar_shows_avatar_when_logged_in(client):
+    register(client, "render_bar")
+    page = client.get("/").text
+    assert "appbar-avatar" in page               # icona cerca sostituita dal profilo
 
 
 def test_theme_fab_present(client):

@@ -55,7 +55,17 @@
       <img src="/static/img/logo.png" alt="BC" class="brand-logo">
       <span>Barsanti <em>Connect</em></span>
     </a>
+    {% if current_user %}
+    <a class="appbar-avatar" href="/u/{{ current_user.username }}" aria-label="Il mio profilo" title="Il mio profilo">
+      {% if current_user.avatar_path %}
+        <img src="/media/{{ current_user.avatar_path }}" alt="@{{ current_user.username }}">
+      {% else %}
+        <span class="avatar small">{{ current_user.username[0]|upper }}</span>
+      {% endif %}
+    </a>
+    {% else %}
     <a class="icon-btn" href="/search" aria-label="Cerca">🔍</a>
+    {% endif %}
   </header>
 
   <main class="content">

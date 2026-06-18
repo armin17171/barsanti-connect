@@ -21,6 +21,7 @@ from ..models import (
 from ..security import hash_password, verify_password
 from ..templating import render
 from ..web import redirect_to
+from .auth import USERNAME_RE
 
 router = APIRouter()
 
@@ -199,42 +200,65 @@ def settings_page(request: Request, user: User = Depends(require_login)):
 
 
 @router.post("/settings")
-async def update_settings(
+def update_settings(
     request: Request,
+    username: str = Form(...),
     bio: str = Form(""),
     current_password: str = Form(""),
     new_password: str = Form(""),
-    avatar: UploadFile | None = File(None),
-    remove_avatar: str = Form(""),
+    confirm_new_password: str = Form(""),
     user: User = Depends(require_login),
     db: DBSession = Depends(get_db),
 ):
-    user.bio = bio.strip()
-    message = "Profilo aggiornato."
+    new_username = username.strip()
     error = None
 
-    # Immagine del profilo
-    if remove_avatar:
-        delete_media(user.avatar_path)
-        user.avatar_path = None
-    elif avatar is not None and avatar.filename:
-        new_path = await save_image(avatar)
-        if new_path:
-            delete_media(user.avatar_path)  # rimuove la vecchia
-            user.avatar_path = new_path
+    # Validazione cambio username
+    if new_username != user.username:
+        if not USERNAME_RE.match(new_username):
+            error = "Username non valido: 3-32 caratteri tra lettere, numeri, '_' e '.'."
+        elif db.query(User).filter(User.username == new_username, User.id != user.id).first():
+            error = "Username già in uso."
 
-    if new_password:
+    # Validazione cambio password
+    change_pw = bool(new_password)
+    if not error and change_pw:
         if not verify_password(current_password, user.password_hash):
-            error = "Password attuale errata: la password non è stata cambiata."
+            error = "Password attuale errata."
+        elif new_password != confirm_new_password:
+            error = "Le due nuove password non coincidono."
         elif len(new_password) < 6:
             error = "La nuova password deve avere almeno 6 caratteri."
-        else:
-            user.password_hash = hash_password(new_password)
-            message = "Profilo e password aggiornati."
 
+    if error:
+        # Niente viene modificato; ripresenta i dati attuali
+        return render("settings.html", request, user=user, error=error, status_code=400)
+
+    user.username = new_username
+    user.bio = bio.strip()
+    message = "Profilo aggiornato."
+    if change_pw:
+        user.password_hash = hash_password(new_password)
+        message = "Profilo e password aggiornati."
     db.commit()
-    return render("settings.html", request, user=user, message=None if error else message,
-                  error=error)
+    return render("settings.html", request, user=user, message=message)
+
+
+@router.post("/me/avatar")
+async def update_avatar(
+    request: Request,
+    avatar: UploadFile | None = File(None),
+    user: User = Depends(require_login),
+    db: DBSession = Depends(get_db),
+):
+    """Cambio immagine profilo dal cerchio nella pagina profilo."""
+    if avatar is not None and avatar.filename:
+        new_path = await save_image(avatar)
+        if new_path:
+            delete_media(user.avatar_path)
+            user.avatar_path = new_path
+            db.commit()
+    return redirect_to(f"/u/{user.username}")
 
 
 @router.get("/admin")

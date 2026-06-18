@@ -67,9 +67,17 @@ Legenda: `[x]` fatto e **testato** · `[ ]` da fare
 - [x] **Biografia adattiva** al testo, senza resize manuale — *test: `test_settings_has_avatar_and_autogrow`*
 - [x] Migrazione idempotente `delete_token_hash` (dati preservati) — *verificato sul Postgres live*
 
+## Aggiornamenti — terzo blocco
+- [x] Menu media: si apre **solo al clic** su "Media" (corretto conflitto CSS) — *test: `test_home_composer_has_media_menu`*
+- [x] **Cambio foto profilo dal profilo** cliccando il cerchio (niente bottoni), endpoint `/me/avatar` — *test: `test_upload_avatar_from_profile`, `test_profile_own_has_avatar_uploader`, `test_guest_cannot_change_avatar`*
+- [x] **Impostazioni**: cambio **nome utente**, **password con conferma**, tema (avatar spostato sul profilo) — *test: `test_change_username_in_settings`, `test_change_username_taken`, `test_settings_password_confirm_mismatch`, `test_settings_password_change_success`*
+- [x] **App bar**: l'icona cerca diventa l'**immagine profilo** e porta al proprio profilo — *test: `test_appbar_shows_avatar_when_logged_in`*
+- [x] **Video** in play solo quando in vista (IntersectionObserver), si fermano (audio incluso) scrollando via
+- [x] **Un solo media alla volta**: avviando un audio/video gli altri si fermano
+
 ---
 
 ### Esito ultima esecuzione test
 ```
-42 passed in 9.43s
+49 passed in 11.16s
 ```

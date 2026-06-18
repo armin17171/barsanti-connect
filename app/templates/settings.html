@@ -7,31 +7,17 @@
 {% if message %}<div class="alert ok">{{ message }}</div>{% endif %}
 {% if error %}<div class="alert err">{{ error }}</div>{% endif %}
 
-<form class="card form" method="post" action="/settings" enctype="multipart/form-data">
-  <h3>Immagine del profilo</h3>
-  <div class="avatar-edit">
-    {% if current_user.avatar_path %}
-      <img class="avatar big img" src="/media/{{ current_user.avatar_path }}" alt="avatar">
-    {% else %}
-      <span class="avatar big">{{ current_user.username[0]|upper }}</span>
-    {% endif %}
-    <div class="avatar-edit-controls">
-      <label class="file-label">📷 Scegli immagine
-        <input type="file" name="avatar" accept="image/*" hidden id="avatarInput">
-      </label>
-      <span class="file-name" id="avatarName"></span>
-      {% if current_user.avatar_path %}
-      <label class="remove-avatar"><input type="checkbox" name="remove_avatar" value="1"> Rimuovi foto attuale</label>
-      {% endif %}
-    </div>
-  </div>
+<form class="card form" method="post" action="/settings">
+  <label class="field-label">Nome utente (3-32, lettere/numeri/_/.)</label>
+  <input type="text" name="username" value="{{ current_user.username }}" required
+         minlength="3" maxlength="32" autocomplete="username">
 
-  <hr>
   <label class="field-label">Biografia</label>
   <textarea name="bio" class="js-autogrow" rows="1" placeholder="Racconta qualcosa di te…">{{ current_user.bio }}</textarea>
 
   <hr>
   <h3>Cambia password</h3>
+  <p class="muted">Lascia vuoto se non vuoi cambiarla.</p>
   <label class="field-label">Password attuale</label>
   <div class="pwd-field">
     <input type="password" name="current_password" autocomplete="current-password">
@@ -42,13 +28,18 @@
     <input type="password" name="new_password" autocomplete="new-password">
     <button type="button" class="js-pwd-toggle" aria-label="Mostra password">👁️</button>
   </div>
+  <label class="field-label">Conferma nuova password</label>
+  <div class="pwd-field">
+    <input type="password" name="confirm_new_password" autocomplete="new-password">
+    <button type="button" class="js-pwd-toggle" aria-label="Mostra password">👁️</button>
+  </div>
 
   <div class="composer-bar"><button class="btn-primary" type="submit">Salva</button></div>
 </form>
 
 <section class="card form">
   <h3>Aspetto</h3>
-  <p class="muted">Cambia tema in qualsiasi momento.</p>
+  <p class="muted">Cambia tema chiaro/scuro in qualsiasi momento.</p>
   <button class="theme-toggle big js-theme-toggle" type="button">
     <span class="t-light">🌙 Passa al tema scuro</span>
     <span class="t-dark">☀️ Passa al tema chiaro</span>

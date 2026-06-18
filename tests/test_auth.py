@@ -60,3 +60,42 @@ def test_register_password_mismatch(client):
     r = register(client, "discorde", password="secret123", confirm="diversa999")
     assert r.status_code == 400
     assert "coincid" in r.text.lower()
+
+
+def test_change_username_in_settings(client):
+    register(client, "vecchionome")
+    r = client.post("/settings", data={"username": "nuovonome", "bio": "ciao"})
+    assert r.status_code == 200
+    assert client.get("/u/nuovonome").status_code == 200
+    assert client.get("/u/vecchionome").status_code == 404
+
+
+def test_change_username_taken(client):
+    register(client, "primo_u")
+    client.post("/logout")
+    register(client, "secondo_u")
+    r = client.post("/settings", data={"username": "primo_u"})
+    assert r.status_code == 400
+    assert "uso" in r.text.lower()
+
+
+def test_settings_password_confirm_mismatch(client):
+    register(client, "cambiapwd")
+    r = client.post("/settings", data={
+        "username": "cambiapwd", "current_password": "secret123",
+        "new_password": "nuova123", "confirm_new_password": "diversa123",
+    })
+    assert r.status_code == 400
+    assert "coincid" in r.text.lower()
+
+
+def test_settings_password_change_success(client):
+    register(client, "okpwd")
+    r = client.post("/settings", data={
+        "username": "okpwd", "current_password": "secret123",
+        "new_password": "nuovapw1", "confirm_new_password": "nuovapw1",
+    })
+    assert r.status_code == 200
+    client.post("/logout")
+    assert client.post("/login", data={"username": "okpwd", "password": "nuovapw1"}).status_code == 200
+    assert client.get("/settings").status_code == 200
