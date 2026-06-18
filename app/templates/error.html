@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}Errore {{ code }} · Barsanti Connect{% endblock %}
+{% block content %}
+<div class="card empty">
+  <h1 class="page-title">Ops! ({{ code }})</h1>
+  <p>{{ message }}</p>
+  <a class="btn-primary" href="/">Torna alla home</a>
+</div>
+{% endblock %}

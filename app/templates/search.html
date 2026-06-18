@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Cerca · Barsanti Connect{% endblock %}
+{% block nav_search %}active{% endblock %}
+
+{% block content %}
+<h1 class="page-title">🔍 Cerca</h1>
+<form class="card search-form" method="get" action="/search">
+  <input type="text" name="q" value="{{ q }}" placeholder="Utenti, #hashtag o eventi…" autofocus>
+  <button class="btn-primary" type="submit">Cerca</button>
+</form>
+
+{% if q %}
+  <h2 class="section-title">Utenti</h2>
+  {% for u in users %}
+    <a class="card row-link" href="/u/{{ u.username }}"><span class="avatar">{{ u.username[0]|upper }}</span> @{{ u.username }}</a>
+  {% else %}<p class="muted">Nessun utente.</p>{% endfor %}
+
+  <h2 class="section-title">Hashtag</h2>
+  {% for h in hashtags %}
+    <a class="card row-link" href="/hashtag/{{ h.tag }}">#{{ h.tag }} <span class="muted">· {{ h.posts|length }} post</span></a>
+  {% else %}<p class="muted">Nessun hashtag.</p>{% endfor %}
+
+  <h2 class="section-title">Eventi</h2>
+  {% for e in events %}
+    <div class="card"><strong>{{ e.title }}</strong> <span class="muted">· {{ e.event_date|datefmt }}</span>
+      {% if e.description %}<p>{{ e.description }}</p>{% endif %}</div>
+  {% else %}<p class="muted">Nessun evento.</p>{% endfor %}
+{% else %}
+  <p class="muted">Scrivi qualcosa per cercare utenti, hashtag o eventi.</p>
+{% endif %}
+{% endblock %}

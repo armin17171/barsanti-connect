@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}Admin · Barsanti Connect{% endblock %}
+
+{% block content %}
+<h1 class="page-title">🛡️ Pannello amministratore</h1>
+
+<h2 class="section-title">Segnalazioni</h2>
+{% for r in reports %}
+<article class="card report-item {% if r.resolved %}resolved{% endif %}">
+  <div>
+    <strong>{{ r.target_type }} #{{ r.target_id }}</strong>
+    {% if r.target_type == 'post' %}<a href="/post/{{ r.target_id }}">apri post</a>{% endif %}
+    <span class="muted">· da @{{ r.reporter.username }} · {{ r.created_at|humantime }}</span>
+    {% if r.reason %}<p>«{{ r.reason }}»</p>{% endif %}
+    {% if r.resolved %}<span class="badge">risolta</span>{% endif %}
+  </div>
+  {% if not r.resolved %}
+  <form method="post" action="/admin/reports/{{ r.id }}/resolve" class="inline">
+    <button class="btn-ghost small" type="submit">Segna risolta</button>
+  </form>
+  {% endif %}
+</article>
+{% else %}
+<div class="card empty">Nessuna segnalazione.</div>
+{% endfor %}
+
+<h2 class="section-title">Utenti</h2>
+{% for u in users %}
+<article class="card user-row">
+  <span><a href="/u/{{ u.username }}">@{{ u.username }}</a>
+    {% if u.is_admin %}<span class="badge">admin</span>{% endif %}
+    {% if u.is_banned %}<span class="badge danger">bannato</span>{% endif %}
+  </span>
+  {% if not u.is_admin %}
+    {% if u.is_banned %}
+    <form method="post" action="/admin/users/{{ u.id }}/unban" class="inline">
+      <button class="btn-ghost small" type="submit">Sbanna</button>
+    </form>
+    {% else %}
+    <form method="post" action="/admin/users/{{ u.id }}/ban" class="inline"
+          onsubmit="return confirm('Bannare @{{ u.username }}?');">
+      <button class="btn-ghost small danger" type="submit">Banna</button>
+    </form>
+    {% endif %}
+  {% endif %}
+</article>
+{% endfor %}
+{% endblock %}

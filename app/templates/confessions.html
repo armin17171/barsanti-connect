@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}Confessioni · Barsanti Connect{% endblock %}
+{% block nav_conf %}active{% endblock %}
+
+{% block content %}
+<h1 class="page-title">🎭 Confessioni anonime</h1>
+<p class="muted note">Tutto qui dentro è <strong>anonimo</strong>: non viene salvato alcun
+collegamento con il tuo account.</p>
+
+{% if current_user %}
+<form class="card composer" method="post" action="/confessions">
+  <textarea name="body" rows="3" placeholder="Scrivi la tua confessione anonima…" required></textarea>
+  <div class="composer-bar"><button class="btn-primary" type="submit">Pubblica in anonimo</button></div>
+</form>
+{% else %}
+<div class="card empty"><a href="/login">Accedi</a> per pubblicare una confessione (resterà comunque anonima).</div>
+{% endif %}
+
+{% for c in confessions %}
+<article class="card confession">
+  <header class="post-head">
+    <span class="avatar mask">🎭</span>
+    <div class="post-meta">
+      <span class="username">Anonimo</span>
+      <span class="time">{{ c.created_at|humantime }}</span>
+    </div>
+    {% if current_user and current_user.is_admin %}
+    <form method="post" action="/confessions/{{ c.id }}/delete" class="inline"
+          onsubmit="return confirm('Eliminare questa confessione?');">
+      <button class="icon-btn danger" type="submit">🗑️</button>
+    </form>
+    {% endif %}
+  </header>
+  <div class="post-body">{{ c.body|linkify }}</div>
+
+  <section class="comments">
+    {% for cc in c.comments %}
+    <div class="comment">
+      <span class="avatar mask small">🎭</span>
+      <div>
+        <span class="username small">Anonimo</span>
+        <span class="time">{{ cc.created_at|humantime }}</span>
+        <div class="comment-body">{{ cc.body|linkify }}</div>
+      </div>
+    </div>
+    {% endfor %}
+    {% if current_user %}
+    <form method="post" action="/confessions/{{ c.id }}/comment" class="comment-form">
+      <input type="text" name="body" placeholder="Commenta in anonimo…" required>
+      <button class="btn-primary small" type="submit">Invia</button>
+    </form>
+    {% endif %}
+  </section>
+</article>
+{% else %}
+<div class="card empty">Ancora nessuna confessione.</div>
+{% endfor %}
+{% endblock %}

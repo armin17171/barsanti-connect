@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Impostazioni · Barsanti Connect{% endblock %}
+
+{% block content %}
+<h1 class="page-title">⚙️ Impostazioni</h1>
+
+{% if message %}<div class="alert ok">{{ message }}</div>{% endif %}
+{% if error %}<div class="alert err">{{ error }}</div>{% endif %}
+
+<form class="card form" method="post" action="/settings">
+  <label class="field-label">Biografia</label>
+  <textarea name="bio" rows="3" placeholder="Racconta qualcosa di te…">{{ current_user.bio }}</textarea>
+
+  <hr>
+  <h3>Cambia password</h3>
+  <label class="field-label">Password attuale</label>
+  <input type="password" name="current_password" autocomplete="current-password">
+  <label class="field-label">Nuova password (min 6 caratteri)</label>
+  <input type="password" name="new_password" autocomplete="new-password">
+
+  <div class="composer-bar"><button class="btn-primary" type="submit">Salva</button></div>
+</form>
+
+<section class="card form">
+  <h3>Aspetto</h3>
+  <p class="muted">Cambia tema in qualsiasi momento.</p>
+  <button class="theme-toggle big" id="themeToggle2" type="button">
+    <span class="t-light">🌙 Passa al tema scuro</span>
+    <span class="t-dark">☀️ Passa al tema chiaro</span>
+  </button>
+</section>
+{% endblock %}

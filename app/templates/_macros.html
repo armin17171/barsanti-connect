@@ -1,0 +1,92 @@
+{% macro avatar(name) %}
+<span class="avatar">{{ name[0]|upper }}</span>
+{% endmacro %}
+
+{% macro post_card(post, current_user, liked_ids, show_comments=False) %}
+<article class="card post" id="post-{{ post.id }}">
+  <header class="post-head">
+    {{ avatar(post.author.username) }}
+    <div class="post-meta">
+      <a class="username" href="/u/{{ post.author.username }}">@{{ post.author.username }}</a>
+      <span class="time">{{ post.created_at|humantime }}</span>
+    </div>
+    {% if current_user and (current_user.id == post.author_id or current_user.is_admin) %}
+    <form method="post" action="/posts/{{ post.id }}/delete" class="inline"
+          onsubmit="return confirm('Eliminare questo post?');">
+      <input type="hidden" name="next" value="/">
+      <button class="icon-btn danger" title="Elimina" type="submit">🗑️</button>
+    </form>
+    {% endif %}
+  </header>
+
+  {% if post.body %}<div class="post-body">{{ post.body|linkify }}</div>{% endif %}
+
+  {% if post.media_path %}
+    <div class="post-media">
+      {% if post.media_kind == 'video' %}
+        <video src="/media/{{ post.media_path }}" controls preload="metadata"></video>
+      {% else %}
+        <img src="/media/{{ post.media_path }}" alt="media" loading="lazy">
+      {% endif %}
+    </div>
+  {% endif %}
+
+  <footer class="post-actions">
+    {% if current_user %}
+      <form method="post" action="/posts/{{ post.id }}/like" class="like-form" data-post="{{ post.id }}">
+        <button class="action like-btn {% if post.id in liked_ids %}liked{% endif %}" type="submit">
+          <span class="heart">{% if post.id in liked_ids %}❤️{% else %}🤍{% endif %}</span>
+          <span class="like-count">{{ post.likes|length }}</span>
+        </button>
+      </form>
+    {% else %}
+      <span class="action disabled">🤍 <span class="like-count">{{ post.likes|length }}</span></span>
+    {% endif %}
+    <a class="action" href="/post/{{ post.id }}">💬 {{ post.comments|length }}</a>
+    {% if current_user %}
+    <details class="report">
+      <summary class="action" title="Segnala">🚩</summary>
+      <form method="post" action="/report" class="report-form">
+        <input type="hidden" name="target_type" value="post">
+        <input type="hidden" name="target_id" value="{{ post.id }}">
+        <input type="text" name="reason" placeholder="Motivo (facoltativo)">
+        <button class="btn-primary small" type="submit">Invia segnalazione</button>
+      </form>
+    </details>
+    {% endif %}
+  </footer>
+
+  {% if show_comments %}
+  <section class="comments">
+    {% for c in post.comments %}
+    <div class="comment">
+      {{ avatar(c.author.username) }}
+      <div>
+        <a class="username small" href="/u/{{ c.author.username }}">@{{ c.author.username }}</a>
+        <span class="time">{{ c.created_at|humantime }}</span>
+        <div class="comment-body">{{ c.body|linkify }}</div>
+      </div>
+      {% if current_user and (current_user.id == c.author_id or current_user.is_admin) %}
+      <form method="post" action="/comments/{{ c.id }}/delete" class="inline"
+            onsubmit="return confirm('Eliminare il commento?');">
+        <input type="hidden" name="next" value="/post/{{ post.id }}">
+        <button class="icon-btn danger small" type="submit">🗑️</button>
+      </form>
+      {% endif %}
+    </div>
+    {% else %}
+    <p class="muted">Ancora nessun commento.</p>
+    {% endfor %}
+
+    {% if current_user %}
+    <form method="post" action="/posts/{{ post.id }}/comment" class="comment-form">
+      <input type="text" name="body" placeholder="Aggiungi un commento…" required>
+      <button class="btn-primary small" type="submit">Invia</button>
+    </form>
+    {% else %}
+    <p class="muted"><a href="/login">Accedi</a> per commentare.</p>
+    {% endif %}
+  </section>
+  {% endif %}
+</article>
+{% endmacro %}

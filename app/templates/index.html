@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% from "_macros.html" import post_card %}
+{% block nav_home %}active{% endblock %}
+
+{% block content %}
+{% if current_user %}
+<form class="card composer" method="post" action="/posts" enctype="multipart/form-data">
+  <textarea name="body" rows="3" placeholder="Cosa succede a scuola, @{{ current_user.username }}? Usa #hashtag…"></textarea>
+  <div class="composer-bar">
+    <label class="file-label">
+      📎 Media
+      <input type="file" name="media" accept="image/*,video/*" hidden>
+    </label>
+    <span class="file-name" id="fileName"></span>
+    <button class="btn-primary" type="submit">Pubblica</button>
+  </div>
+</form>
+{% endif %}
+
+{% for post in posts %}
+  {{ post_card(post, current_user, liked_ids) }}
+{% else %}
+  <div class="card empty">Ancora nessun post. {% if current_user %}Scrivi il primo!{% else %}<a href="/register">Registrati</a> per iniziare.{% endif %}</div>
+{% endfor %}
+{% endblock %}

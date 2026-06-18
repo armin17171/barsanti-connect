@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Registrati · Barsanti Connect{% endblock %}
+
+{% block content %}
+<div class="auth-card card">
+  <img src="/static/img/logo.png" alt="BC" class="auth-logo">
+  <h1>Crea il tuo account</h1>
+  {% if error %}<div class="alert err">{{ error }}</div>{% endif %}
+  <form method="post" action="/register" class="form">
+    <label class="field-label">Username (3-32, lettere/numeri/_/.)</label>
+    <input type="text" name="username" required autofocus value="{{ (values.username if values else '') }}"
+           autocomplete="username" minlength="3" maxlength="32">
+    <label class="field-label">Password (min 6 caratteri)</label>
+    <input type="password" name="password" required autocomplete="new-password" minlength="6">
+    <label class="field-label">Biografia (facoltativa)</label>
+    <textarea name="bio" rows="2">{{ (values.bio if values else '') }}</textarea>
+    <button class="btn-primary" type="submit">Registrati</button>
+  </form>
+  <p class="muted">Hai già un account? <a href="/login">Accedi</a></p>
+</div>
+{% endblock %}

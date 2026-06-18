@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Calendario · Barsanti Connect{% endblock %}
+{% block nav_cal %}active{% endblock %}
+
+{% block content %}
+<h1 class="page-title">📅 Calendario eventi</h1>
+
+<form class="card composer" method="post" action="/events">
+  <input type="text" name="title" placeholder="Titolo evento" required>
+  <textarea name="description" rows="2" placeholder="Descrizione (facoltativa)"></textarea>
+  <label class="field-label">Data e ora</label>
+  <input type="datetime-local" name="event_date" required>
+  <div class="composer-bar"><button class="btn-primary" type="submit">Aggiungi evento</button></div>
+</form>
+
+{% for e in events %}
+<article class="card event">
+  <div class="event-date">
+    <span class="day">{{ e.event_date|datefmt('%d') }}</span>
+    <span class="mon">{{ e.event_date|datefmt('%m/%Y') }}</span>
+    <span class="hour">{{ e.event_date|datefmt('%H:%M') }}</span>
+  </div>
+  <div class="event-info">
+    <h3>{{ e.title }}</h3>
+    {% if e.description %}<p>{{ e.description|linkify }}</p>{% endif %}
+    <span class="muted">creato da <a href="/u/{{ e.author.username }}">@{{ e.author.username }}</a></span>
+  </div>
+  {% if current_user and (current_user.id == e.author_id or current_user.is_admin) %}
+  <form method="post" action="/events/{{ e.id }}/delete" class="inline"
+        onsubmit="return confirm('Eliminare questo evento?');">
+    <button class="icon-btn danger" type="submit">🗑️</button>
+  </form>
+  {% endif %}
+</article>
+{% else %}
+<div class="card empty">Nessun evento in programma.</div>
+{% endfor %}
+{% endblock %}

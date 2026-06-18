@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% from "_macros.html" import post_card %}
+{% block title %}@{{ profile_user.username }} · Barsanti Connect{% endblock %}
+
+{% block content %}
+<section class="card profile-head">
+  <span class="avatar big">{{ profile_user.username[0]|upper }}</span>
+  <h1>@{{ profile_user.username }}
+    {% if profile_user.is_admin %}<span class="badge">admin</span>{% endif %}
+    {% if profile_user.is_banned %}<span class="badge danger">bannato</span>{% endif %}
+  </h1>
+  {% if profile_user.bio %}<p class="bio">{{ profile_user.bio|linkify }}</p>{% endif %}
+  <p class="muted">{{ posts|length }} post · iscritto dal {{ profile_user.created_at|datefmt('%d/%m/%Y') }}</p>
+  {% if current_user and current_user.id == profile_user.id %}
+    <a class="btn-ghost" href="/settings">Modifica profilo</a>
+  {% endif %}
+</section>
+
+<h2 class="section-title">Post</h2>
+{% for post in posts %}
+  {{ post_card(post, current_user, liked_ids) }}
+{% else %}
+  <div class="card empty">Nessun post.</div>
+{% endfor %}
+
+<h2 class="section-title">Commenti recenti</h2>
+{% for c in comments %}
+<a class="card comment-link" href="/post/{{ c.post_id }}">
+  <div class="comment-body">{{ c.body|linkify }}</div>
+  <span class="time">{{ c.created_at|humantime }}</span>
+</a>
+{% else %}
+<div class="card empty">Nessun commento.</div>
+{% endfor %}
+{% endblock %}

@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% from "_macros.html" import post_card %}
+{% block title %}#{{ tag }} · Barsanti Connect{% endblock %}
+
+{% block content %}
+<h1 class="page-title">#{{ tag }}</h1>
+{% for post in posts %}
+  {{ post_card(post, current_user, liked_ids) }}
+{% else %}
+  <div class="card empty">Nessun post con #{{ tag }}.</div>
+{% endfor %}
+{% endblock %}
