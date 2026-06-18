@@ -1,7 +1,3 @@
-<p align="center">
-  <img src="app/static/img/logo.png" width="96" alt="Barsanti Connect logo">
-</p>
-
 <h1 align="center">Barsanti Connect</h1>
 
 <p align="center">
