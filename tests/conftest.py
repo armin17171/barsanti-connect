@@ -24,10 +24,15 @@ def client():
         yield c
 
 
-def register(client, username, password="secret123", bio=""):
+def register(client, username, password="secret123", bio="", confirm=None):
     return client.post(
         "/register",
-        data={"username": username, "password": password, "bio": bio},
+        data={
+            "username": username,
+            "password": password,
+            "confirm_password": password if confirm is None else confirm,
+            "bio": bio,
+        },
     )
 
 

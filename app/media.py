@@ -6,7 +6,8 @@ from fastapi import HTTPException, UploadFile, status
 from .config import settings
 
 IMAGE_EXTS = {".jpg", ".jpeg", ".png", ".gif", ".webp"}
-VIDEO_EXTS = {".mp4", ".webm", ".ogg", ".mov"}
+VIDEO_EXTS = {".mp4", ".webm", ".mov", ".m4v"}
+AUDIO_EXTS = {".mp3", ".wav", ".ogg", ".oga", ".m4a", ".aac", ".flac"}
 
 
 def _kind_for_ext(ext: str) -> str | None:
@@ -14,6 +15,8 @@ def _kind_for_ext(ext: str) -> str | None:
         return "image"
     if ext in VIDEO_EXTS:
         return "video"
+    if ext in AUDIO_EXTS:
+        return "audio"
     return None
 
 
@@ -30,7 +33,7 @@ async def save_upload(file: UploadFile | None) -> tuple[str | None, str | None]:
     if kind is None:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Formato file non supportato (immagini o video).",
+            detail="Formato file non supportato (immagine, video o audio).",
         )
 
     os.makedirs(settings.media_dir, exist_ok=True)

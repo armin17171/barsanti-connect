@@ -136,6 +136,9 @@ class Confession(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     body: Mapped[str] = mapped_column(Text, nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, index=True)
+    # Hash (sha256) di un token casuale dato a chi pubblica, così può cancellare la
+    # PROPRIA confessione. NON deriva dall'identità dell'utente: l'anonimato resta totale.
+    delete_token_hash: Mapped[str | None] = mapped_column(String(64), nullable=True)
 
     comments = relationship(
         "ConfessionComment", back_populates="confession",

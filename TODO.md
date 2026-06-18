@@ -53,9 +53,23 @@ Legenda: `[x]` fatto e **testato** · `[ ]` da fare
 - [x] Migrazione idempotente `avatar_path` (nessuna perdita dati su DB esistente) — *verificato sul Postgres live*
 - [x] **Toggle tema solo in Home (switch della luce) e Impostazioni**, rimosso dal menu laterale — *verificato sul live*
 
+## Aggiornamenti — secondo blocco
+- [x] **Registrazione**: conferma password + pulsante 👁️ mostra/nascondi (anche login e impostazioni) — *test: `test_register_password_mismatch`*
+- [x] **Upload fino a ~1 GB** (`MAX_UPLOAD_MB=1024`) + nuovi tipi **audio** — *test: `test_large_upload_allowed`, `test_audio_post_shows_player`*
+- [x] **Composer**: menu a tendina su "Media" per scegliere foto/video/audio — *test: `test_home_composer_has_media_menu`*
+- [x] **Video** in autoplay + loop + muto (con sblocco audio via controlli)
+- [x] **Player audio** con onde grafiche, play/pausa e seek
+- [x] **Modifica dei propri post** (testo + media), non di altri — *test: `test_edit_own_post`, `test_cannot_edit_others_post`*
+- [x] **Confessioni**: cancellazione dall'autore via token segreto (hash nel DB, anonimato intatto) + admin — *test: `test_confession_author_delete_with_token`, `test_admin_delete_confession_without_token`*
+- [x] **Calendario reale** a griglia mensile con navigazione — *test: `test_calendar_grid_renders`*
+- [x] **Popup eventi imminenti** in home (prossimi 7 giorni), dismissibile — *test: `test_upcoming_event_popup_for_user`*
+- [x] **Pulsante tema flottante** in basso a destra, solo icona (rimosso dal menu) — *test: `test_theme_fab_present`*
+- [x] **Biografia adattiva** al testo, senza resize manuale — *test: `test_settings_has_avatar_and_autogrow`*
+- [x] Migrazione idempotente `delete_token_hash` (dati preservati) — *verificato sul Postgres live*
+
 ---
 
 ### Esito ultima esecuzione test
 ```
-30 passed in 6.27s
+42 passed in 9.43s
 ```

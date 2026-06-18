@@ -3,23 +3,30 @@
 {% block nav_home %}active{% endblock %}
 
 {% block content %}
-<div class="light-switch-card">
-  <span class="light-label">💡 Luci</span>
-  <label class="light-switch" title="Cambia tema chiaro/scuro">
-    <span class="ls-ico sun">☀️</span>
-    <input type="checkbox" class="js-theme-checkbox" aria-label="Cambia tema">
-    <span class="ls-track"><span class="ls-thumb"></span></span>
-    <span class="ls-ico moon">🌙</span>
-  </label>
+{% if upcoming %}
+<div class="event-popup js-event-popup">
+  <button class="event-popup-close js-popup-close" type="button" aria-label="Chiudi">✕</button>
+  <strong>📅 Eventi in arrivo</strong>
+  <ul>
+    {% for e in upcoming %}
+    <li data-event-id="{{ e.id }}"><a href="/calendar">{{ e.title }}</a> — {{ e.event_date|datefmt('%d/%m alle %H:%M') }}</li>
+    {% endfor %}
+  </ul>
 </div>
+{% endif %}
 {% if current_user %}
 <form class="card composer" method="post" action="/posts" enctype="multipart/form-data">
-  <textarea name="body" rows="3" placeholder="Cosa succede a scuola, @{{ current_user.username }}? Usa #hashtag…"></textarea>
+  <textarea name="body" class="js-autogrow" rows="2" placeholder="Cosa succede a scuola, @{{ current_user.username }}? Usa #hashtag…"></textarea>
   <div class="composer-bar">
-    <label class="file-label">
-      📎 Media
-      <input type="file" name="media" accept="image/*,video/*" hidden>
-    </label>
+    <div class="media-menu">
+      <button type="button" class="file-label js-media-btn">📎 Media ▾</button>
+      <div class="media-options" hidden>
+        <button type="button" data-accept="image/*">🖼️ Foto</button>
+        <button type="button" data-accept="video/*">🎬 Video</button>
+        <button type="button" data-accept="audio/*">🎵 Audio</button>
+      </div>
+    </div>
+    <input type="file" name="media" hidden id="composerFile">
     <span class="file-name" id="fileName"></span>
     <button class="btn-primary" type="submit">Pubblica</button>
   </div>

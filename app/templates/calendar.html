@@ -7,14 +7,38 @@
 
 <form class="card composer" method="post" action="/events">
   <input type="text" name="title" placeholder="Titolo evento" required>
-  <textarea name="description" rows="2" placeholder="Descrizione (facoltativa)"></textarea>
+  <textarea name="description" class="js-autogrow" rows="1" placeholder="Descrizione (facoltativa)"></textarea>
   <label class="field-label">Data e ora</label>
   <input type="datetime-local" name="event_date" required>
   <div class="composer-bar"><button class="btn-primary" type="submit">Aggiungi evento</button></div>
 </form>
 
-{% for e in events %}
-<article class="card event">
+<section class="card calendar">
+  <div class="cal-nav">
+    <a class="btn-ghost small" href="/calendar?month={{ prev_month }}">‹</a>
+    <strong>{{ month_label }}</strong>
+    <a class="btn-ghost small" href="/calendar?month={{ next_month }}">›</a>
+  </div>
+  <div class="cal-grid cal-head">
+    <span>Lun</span><span>Mar</span><span>Mer</span><span>Gio</span><span>Ven</span><span>Sab</span><span>Dom</span>
+  </div>
+  {% for week in weeks %}
+  <div class="cal-grid">
+    {% for d in week %}
+    <div class="cal-day{% if not d.in_month %} muted-day{% endif %}{% if d.today %} today{% endif %}{% if d.events %} has-events{% endif %}">
+      <span class="cal-num">{{ d.date.day }}</span>
+      {% for e in d.events %}
+        <a class="cal-event" href="#ev-{{ e.id }}" title="{{ e.title }}">{{ e.title }}</a>
+      {% endfor %}
+    </div>
+    {% endfor %}
+  </div>
+  {% endfor %}
+</section>
+
+<h2 class="section-title">Eventi del mese</h2>
+{% for e in month_events %}
+<article class="card event" id="ev-{{ e.id }}">
   <div class="event-date">
     <span class="day">{{ e.event_date|datefmt('%d') }}</span>
     <span class="mon">{{ e.event_date|datefmt('%m/%Y') }}</span>
@@ -33,6 +57,6 @@
   {% endif %}
 </article>
 {% else %}
-<div class="card empty">Nessun evento in programma.</div>
+<div class="card empty">Nessun evento in questo mese.</div>
 {% endfor %}
 {% endblock %}

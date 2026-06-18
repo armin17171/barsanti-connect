@@ -17,7 +17,7 @@ class Settings(BaseSettings):
     admin_password: str = "admin"
 
     # Limite upload media (MB)
-    max_upload_mb: int = 15
+    max_upload_mb: int = 1024
 
     # Cartella su disco dove vengono salvati i media caricati.
     media_dir: str = "media"

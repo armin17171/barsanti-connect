@@ -35,11 +35,17 @@ def _wait_for_db(retries: int = 30, delay: float = 1.0) -> None:
 def _run_migrations() -> None:
     """Migrazioni leggere e idempotenti per DB già esistenti (create_all non fa ALTER)."""
     insp = inspect(engine)
-    if "users" in insp.get_table_names():
+    tables = insp.get_table_names()
+    if "users" in tables:
         cols = {c["name"] for c in insp.get_columns("users")}
         if "avatar_path" not in cols:
             with engine.begin() as conn:
                 conn.execute(text("ALTER TABLE users ADD COLUMN avatar_path VARCHAR(255)"))
+    if "confessions" in tables:
+        cols = {c["name"] for c in insp.get_columns("confessions")}
+        if "delete_token_hash" not in cols:
+            with engine.begin() as conn:
+                conn.execute(text("ALTER TABLE confessions ADD COLUMN delete_token_hash VARCHAR(64)"))
 
 
 def _seed_admin() -> None:

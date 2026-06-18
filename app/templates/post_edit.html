@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Modifica post · Barsanti Connect{% endblock %}
+
+{% block content %}
+<a class="back" href="/post/{{ post.id }}">← Annulla</a>
+<h1 class="page-title">✏️ Modifica post</h1>
+
+<form class="card composer" method="post" action="/posts/{{ post.id }}/edit" enctype="multipart/form-data">
+  <textarea name="body" class="js-autogrow" rows="3" placeholder="Scrivi qualcosa… usa #hashtag">{{ post.body }}</textarea>
+
+  {% if post.media_path %}
+  <div class="post-media">
+    {% if post.media_kind == 'video' %}
+      <video src="/media/{{ post.media_path }}" controls muted loop playsinline></video>
+    {% elif post.media_kind == 'audio' %}
+      <audio src="/media/{{ post.media_path }}" controls></audio>
+    {% else %}
+      <img src="/media/{{ post.media_path }}" alt="media">
+    {% endif %}
+  </div>
+  <label class="remove-avatar"><input type="checkbox" name="remove_media" value="1"> Rimuovi il media attuale</label>
+  {% endif %}
+
+  <div class="composer-bar">
+    <label class="file-label">📎 Sostituisci media
+      <input type="file" name="media" accept="image/*,video/*,audio/*" hidden id="editMediaInput">
+    </label>
+    <span class="file-name" id="editMediaName"></span>
+    <button class="btn-primary" type="submit">Salva modifiche</button>
+  </div>
+</form>
+{% endblock %}

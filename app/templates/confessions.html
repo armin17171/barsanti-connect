@@ -8,8 +8,8 @@
 collegamento con il tuo account.</p>
 
 {% if current_user %}
-<form class="card composer" method="post" action="/confessions">
-  <textarea name="body" rows="3" placeholder="Scrivi la tua confessione anonima…" required></textarea>
+<form class="card composer js-confession-form" method="post" action="/confessions">
+  <textarea name="body" class="js-autogrow" rows="2" placeholder="Scrivi la tua confessione anonima…" required></textarea>
   <div class="composer-bar"><button class="btn-primary" type="submit">Pubblica in anonimo</button></div>
 </form>
 {% else %}
@@ -17,7 +17,7 @@ collegamento con il tuo account.</p>
 {% endif %}
 
 {% for c in confessions %}
-<article class="card confession">
+<article class="card confession" data-conf-id="{{ c.id }}">
   <header class="post-head">
     <span class="avatar mask">🎭</span>
     <div class="post-meta">
@@ -26,8 +26,14 @@ collegamento con il tuo account.</p>
     </div>
     {% if current_user and current_user.is_admin %}
     <form method="post" action="/confessions/{{ c.id }}/delete" class="inline"
-          onsubmit="return confirm('Eliminare questa confessione?');">
-      <button class="icon-btn danger" type="submit">🗑️</button>
+          onsubmit="return confirm('Eliminare questa confessione? (Non vedrai chi l'\''ha scritta)');">
+      <button class="icon-btn danger" type="submit" title="Elimina (admin)">🗑️</button>
+    </form>
+    {% elif current_user %}
+    <form method="post" action="/confessions/{{ c.id }}/delete" class="inline js-conf-author-delete" hidden
+          onsubmit="return confirm('Eliminare la tua confessione?');">
+      <input type="hidden" name="token" value="">
+      <button class="icon-btn danger" type="submit" title="Elimina la tua confessione">🗑️</button>
     </form>
     {% endif %}
   </header>

@@ -11,7 +11,15 @@
     <input type="text" name="username" required autofocus value="{{ (values.username if values else '') }}"
            autocomplete="username" minlength="3" maxlength="32">
     <label class="field-label">Password (min 6 caratteri)</label>
-    <input type="password" name="password" required autocomplete="new-password" minlength="6">
+    <div class="pwd-field">
+      <input type="password" name="password" required autocomplete="new-password" minlength="6">
+      <button type="button" class="js-pwd-toggle" aria-label="Mostra password">👁️</button>
+    </div>
+    <label class="field-label">Conferma password</label>
+    <div class="pwd-field">
+      <input type="password" name="confirm_password" required autocomplete="new-password" minlength="6">
+      <button type="button" class="js-pwd-toggle" aria-label="Mostra password">👁️</button>
+    </div>
     <label class="field-label">Biografia (facoltativa)</label>
     <textarea name="bio" rows="2">{{ (values.bio if values else '') }}</textarea>
     <button class="btn-primary" type="submit">Registrati</button>

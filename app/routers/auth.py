@@ -47,6 +47,7 @@ def register(
     request: Request,
     username: str = Form(...),
     password: str = Form(...),
+    confirm_password: str = Form(""),
     bio: str = Form(""),
     db: DBSession = Depends(get_db),
 ):
@@ -56,6 +57,8 @@ def register(
         error = "Username non valido: 3-32 caratteri tra lettere, numeri, '_' e '.'."
     elif len(password) < 6:
         error = "La password deve avere almeno 6 caratteri."
+    elif password != confirm_password:
+        error = "Le due password non coincidono."
     elif db.query(User).filter(User.username == username).first():
         error = "Username già in uso."
 

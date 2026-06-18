@@ -76,6 +76,11 @@
     <a href="/confessions" class="{% block nav_conf %}{% endblock %}" aria-label="Confessioni">🎭</a>
   </nav>
 
+  <!-- Pulsante tema flottante (solo icona, in basso a destra) -->
+  <button class="theme-fab js-theme-toggle" type="button" aria-label="Cambia tema chiaro/scuro" title="Cambia tema">
+    <span class="t-light">🌙</span><span class="t-dark">☀️</span>
+  </button>
+
   <script src="/static/js/app.js"></script>
   {% block scripts %}{% endblock %}
 </body>

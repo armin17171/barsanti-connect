@@ -34,8 +34,9 @@ def test_confession_model_has_no_author_link():
     cols = {c.name for c in Confession.__table__.columns}
     assert "author_id" not in cols
     assert "user_id" not in cols
-    # solo questi campi, nessun riferimento all'autore
-    assert cols == {"id", "body", "created_at"}
+    # delete_token_hash è l'hash di un token casuale dato all'autore: NON deriva
+    # dall'identità dell'utente, quindi l'anonimato resta totale.
+    assert cols == {"id", "body", "created_at", "delete_token_hash"}
 
 
 def test_guest_cannot_post_confession(client):

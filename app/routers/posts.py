@@ -35,6 +35,45 @@ async def create_post(
     return redirect_to(f"/post/{post.id}")
 
 
+@router.post("/posts/{post_id}/edit")
+async def edit_post(
+    post_id: int,
+    request: Request,
+    body: str = Form(...),
+    media: UploadFile | None = File(None),
+    remove_media: str = Form(""),
+    user: User = Depends(require_login),
+    db: DBSession = Depends(get_db),
+):
+    post = db.get(Post, post_id)
+    if not post:
+        raise HTTPException(status_code=404, detail="Post non trovato.")
+    # Solo l'autore può modificare i PROPRI post (nemmeno l'admin modifica gli altrui).
+    if post.author_id != user.id:
+        raise HTTPException(status_code=403, detail="Puoi modificare solo i tuoi post.")
+
+    body = body.strip()
+
+    # Gestione media: rimozione o sostituzione
+    if remove_media:
+        delete_media(post.media_path)
+        post.media_path = None
+        post.media_kind = None
+    if media is not None and media.filename:
+        new_path, new_kind = await save_upload(media)
+        delete_media(post.media_path)
+        post.media_path = new_path
+        post.media_kind = new_kind
+
+    if not body and not post.media_path:
+        raise HTTPException(status_code=400, detail="Il post non può essere vuoto.")
+
+    post.body = body
+    post.hashtags = get_or_create_hashtags(db, extract_hashtags(body))
+    db.commit()
+    return redirect_to(f"/post/{post.id}")
+
+
 @router.post("/posts/{post_id}/like")
 def toggle_like(
     post_id: int,

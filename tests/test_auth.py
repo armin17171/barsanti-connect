@@ -54,3 +54,9 @@ def test_logout_revokes_access(client):
     client.post("/logout")
     # Senza sessione la pagina protetta non è accessibile
     assert client.get("/settings").status_code == 401
+
+
+def test_register_password_mismatch(client):
+    r = register(client, "discorde", password="secret123", confirm="diversa999")
+    assert r.status_code == 400
+    assert "coincid" in r.text.lower()

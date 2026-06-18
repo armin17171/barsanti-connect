@@ -14,11 +14,12 @@
 ## ✨ Cosa puoi fare
 
 - 🏠 **Feed pubblico** visibile a chiunque sulla rete (anche senza account)
-- ✍️ **Pubblicare post** con testo libero e, se vuoi, un'immagine o un video
+- ✍️ **Pubblicare post** con testo libero e, se vuoi, **foto, video o audio** (menu a tendina sul tasto Media, file fino a ~1 GB)
+- ✏️ **Modificare i propri post** (testo e media); i video partono da soli in loop e muti, l'audio ha un player con onde
 - 🔖 **Hashtag automatici**: scrivi `#esempio` e nasce la categoria con tutti i post relativi
 - ❤️ **Like** e 💬 **commenti** sotto ogni post
-- 📅 **Calendario eventi** della scuola (solo per utenti registrati)
-- 🎭 **Confessioni anonime**: pubblichi senza che nessuno — nemmeno l'amministratore — possa risalire a te
+- 📅 **Calendario eventi** a griglia mensile (solo per utenti registrati) + **promemoria** in home per gli eventi imminenti
+- 🎭 **Confessioni anonime**: pubblichi senza che nessuno — nemmeno l'amministratore — possa risalire a te (puoi però cancellare le tue)
 - 🔍 **Ricerca** per utente, hashtag o evento
 - 👤 **Profili pubblici** navigabili con post e commenti di ciascun utente
 - 🌗 **Tema chiaro/scuro** commutabile in qualsiasi momento
@@ -100,6 +101,12 @@ anti-spam, ma l'identità non viene mai salvata.
 
 Conseguenza pratica: l'amministratore **può cancellare** una confessione che viola
 le regole, ma **non può sapere chi l'ha scritta** né bannarne l'autore.
+
+Chi pubblica una confessione **può cancellare la propria**: al momento della
+pubblicazione il browser riceve un token segreto (salvato solo localmente sul
+dispositivo); nel database ne resta solo l'hash, non collegato all'utente. Quindi
+il pulsante "elimina" sulle proprie confessioni compare solo sul dispositivo da cui
+sono state scritte, senza mai registrare un legame con l'identità.
 
 ---
 

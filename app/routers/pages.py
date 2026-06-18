@@ -1,3 +1,6 @@
+import calendar as pycal
+from datetime import date, datetime, timedelta, timezone
+
 from fastapi import APIRouter, Depends, File, Form, Request, UploadFile
 from sqlalchemy import or_
 from sqlalchemy.orm import Session as DBSession
@@ -38,7 +41,19 @@ def index(request: Request, user: User | None = Depends(get_current_user),
           db: DBSession = Depends(get_db)):
     posts = db.query(Post).order_by(Post.created_at.desc()).limit(100).all()
     liked = _liked_ids(db, user, [p.id for p in posts])
-    return render("index.html", request, user=user, posts=posts, liked_ids=liked)
+    # Eventi imminenti (prossimi 7 giorni) per il popup in home — solo per i registrati
+    upcoming = []
+    if user:
+        now = datetime.now(timezone.utc)
+        soon = now + timedelta(days=7)
+        upcoming = (
+            db.query(Event)
+            .filter(Event.event_date >= now, Event.event_date <= soon)
+            .order_by(Event.event_date.asc())
+            .limit(5)
+            .all()
+        )
+    return render("index.html", request, user=user, posts=posts, liked_ids=liked, upcoming=upcoming)
 
 
 @router.get("/post/{post_id}")
@@ -53,14 +68,62 @@ def post_detail(post_id: int, request: Request,
     return render("post_detail.html", request, user=user, post=post, liked_ids=liked)
 
 
+@router.get("/post/{post_id}/edit")
+def edit_post_page(post_id: int, request: Request,
+                   user: User = Depends(require_login),
+                   db: DBSession = Depends(get_db)):
+    post = db.get(Post, post_id)
+    if not post:
+        return render("not_found.html", request, user=user, status_code=404,
+                      message="Post non trovato.")
+    if post.author_id != user.id:
+        return render("not_found.html", request, user=user, status_code=403,
+                      message="Puoi modificare solo i tuoi post.")
+    return render("post_edit.html", request, user=user, post=post)
+
+
+_MESI = ["", "Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno",
+         "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"]
+
+
 @router.get("/calendar")
-def calendar(request: Request, user: User | None = Depends(get_current_user),
+def calendar(request: Request, month: str = "",
+             user: User | None = Depends(get_current_user),
              db: DBSession = Depends(get_db)):
     # Gli ospiti NON possono accedere al calendario (requisito).
     if user is None:
         return redirect_to("/login")
+
+    today = datetime.now(timezone.utc).date()
+    try:
+        year, mon = (int(x) for x in month.split("-"))
+        date(year, mon, 1)
+    except (ValueError, TypeError):
+        year, mon = today.year, today.month
+
     events = db.query(Event).order_by(Event.event_date.asc()).all()
-    return render("calendar.html", request, user=user, events=events)
+    by_day: dict[date, list] = {}
+    for e in events:
+        d = e.event_date.date()
+        by_day.setdefault(d, []).append(e)
+
+    weeks = []
+    for week in pycal.Calendar(firstweekday=0).monthdatescalendar(year, mon):
+        weeks.append([
+            {"date": d, "in_month": d.month == mon, "today": d == today,
+             "events": by_day.get(d, [])}
+            for d in week
+        ])
+
+    prev_d = date(year, mon, 1) - timedelta(days=1)
+    next_d = (date(year, mon, 28) + timedelta(days=10)).replace(day=1)
+    month_events = [e for e in events if e.event_date.year == year and e.event_date.month == mon]
+
+    return render("calendar.html", request, user=user, weeks=weeks,
+                  month_label=f"{_MESI[mon]} {year}",
+                  prev_month=f"{prev_d.year}-{prev_d.month:02d}",
+                  next_month=f"{next_d.year}-{next_d.month:02d}",
+                  month_events=month_events)
 
 
 @router.get("/confessions")

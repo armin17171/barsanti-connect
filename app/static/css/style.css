@@ -245,6 +245,91 @@ img.avatar { object-fit: cover; }
 .remove-avatar { font-size: .85rem; color: var(--muted); display: flex; align-items: center; gap: 6px; }
 .remove-avatar input { width: auto; margin: 0; }
 
+/* ---------- Mostra/nascondi password ---------- */
+.pwd-field { position: relative; margin-bottom: 10px; }
+.pwd-field input { margin-bottom: 0; padding-right: 42px; }
+.pwd-field .js-pwd-toggle {
+  position: absolute; right: 6px; top: 50%; transform: translateY(-50%);
+  background: none; border: none; cursor: pointer; font-size: 1.05rem; opacity: .55; padding: 4px;
+}
+.pwd-field .js-pwd-toggle.on { opacity: 1; }
+
+/* ---------- Textarea adattiva ---------- */
+textarea.js-autogrow { resize: none; overflow: hidden; min-height: 46px; }
+
+/* ---------- Pulsante tema flottante ---------- */
+.theme-fab {
+  position: fixed; right: 16px; bottom: 84px; z-index: 35;
+  width: 52px; height: 52px; border-radius: 50%;
+  border: 1px solid var(--border); background: var(--surface);
+  box-shadow: var(--shadow); font-size: 1.4rem; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+}
+.theme-fab:hover { filter: brightness(1.06); }
+
+/* ---------- Menu a tendina Media ---------- */
+.media-menu { position: relative; }
+.media-options {
+  position: absolute; bottom: calc(100% + 6px); left: 0; z-index: 20;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 12px; box-shadow: var(--shadow); padding: 6px;
+  display: flex; flex-direction: column; gap: 2px; min-width: 140px;
+}
+.media-options button {
+  background: none; border: none; text-align: left; padding: 9px 11px;
+  border-radius: 8px; cursor: pointer; color: var(--text); font: inherit;
+}
+.media-options button:hover { background: var(--surface-2); }
+
+/* ---------- Player audio con onde ---------- */
+.audio-player {
+  display: flex; align-items: center; gap: 10px; margin-top: 6px;
+  background: var(--surface-2); border: 1px solid var(--border);
+  border-radius: 14px; padding: 10px 12px;
+}
+.ap-play {
+  flex: 0 0 auto; width: 40px; height: 40px; border-radius: 50%; border: none;
+  cursor: pointer; font-size: 1rem; color: #fff;
+  background: linear-gradient(135deg, var(--primary), var(--primary-2));
+}
+.ap-wave { flex: 1; display: flex; align-items: center; gap: 2px; height: 40px; cursor: pointer; }
+.ap-wave span { flex: 1; min-width: 2px; height: 30%; background: var(--border); border-radius: 2px; transition: background .1s; }
+.ap-wave span.on { background: linear-gradient(180deg, var(--primary), var(--primary-2)); }
+.ap-time { flex: 0 0 auto; font-size: .8rem; color: var(--muted); min-width: 38px; text-align: right; }
+
+/* ---------- Popup eventi imminenti ---------- */
+.event-popup {
+  position: relative; color: #fff; border-radius: 16px; padding: 14px 16px 14px;
+  margin-bottom: 16px; box-shadow: var(--shadow);
+  background: linear-gradient(135deg, var(--primary), var(--primary-2));
+}
+.event-popup strong { display: block; margin-bottom: 6px; }
+.event-popup ul { margin: 0; padding-left: 18px; }
+.event-popup a { color: #fff; text-decoration: underline; }
+.event-popup-close {
+  position: absolute; top: 8px; right: 10px; background: none; border: none;
+  color: #fff; font-size: 1rem; cursor: pointer; opacity: .85;
+}
+
+/* ---------- Calendario mensile ---------- */
+.cal-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+.cal-head span { text-align: center; font-size: .75rem; color: var(--muted); padding: 4px 0; }
+.cal-day {
+  min-height: 62px; border: 1px solid var(--border); border-radius: 10px; padding: 4px;
+  display: flex; flex-direction: column; gap: 2px; background: var(--surface-2); overflow: hidden;
+}
+.cal-day.muted-day { opacity: .4; }
+.cal-day.today { border-color: var(--primary); box-shadow: inset 0 0 0 1px var(--primary); }
+.cal-num { font-size: .78rem; color: var(--muted); }
+.cal-day.has-events .cal-num { font-weight: 700; color: var(--text); }
+.cal-event {
+  font-size: .66rem; color: #fff; border-radius: 6px; padding: 1px 4px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  background: linear-gradient(135deg, var(--primary), var(--primary-2));
+}
+.cal-event:hover { text-decoration: none; }
+
 @media (min-width: 720px) {
   .content { max-width: 680px; }
 }
