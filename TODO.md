@@ -46,7 +46,7 @@ Legenda: `[x]` fatto e **testato** · `[ ]` da fare
 - [x] `TODO.md` (questo file)
 - [x] `README.md` (guida d'uso e avvio)
 - [x] `CLAUDE.md` (contesto progetto)
-- [ ] Pubblicazione su **GitHub** (in attesa del login `gh auth login` da parte tua)
+- [x] Pubblicazione su **GitHub** → https://github.com/armin17171/barsanti-connect (pubblico)
 
 ---
 
