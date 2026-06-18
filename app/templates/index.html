@@ -3,6 +3,15 @@
 {% block nav_home %}active{% endblock %}
 
 {% block content %}
+<div class="light-switch-card">
+  <span class="light-label">💡 Luci</span>
+  <label class="light-switch" title="Cambia tema chiaro/scuro">
+    <span class="ls-ico sun">☀️</span>
+    <input type="checkbox" class="js-theme-checkbox" aria-label="Cambia tema">
+    <span class="ls-track"><span class="ls-thumb"></span></span>
+    <span class="ls-ico moon">🌙</span>
+  </label>
+</div>
 {% if current_user %}
 <form class="card composer" method="post" action="/posts" enctype="multipart/form-data">
   <textarea name="body" rows="3" placeholder="Cosa succede a scuola, @{{ current_user.username }}? Usa #hashtag…"></textarea>

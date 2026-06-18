@@ -53,6 +53,20 @@ async def save_upload(file: UploadFile | None) -> tuple[str | None, str | None]:
     return name, kind
 
 
+async def save_image(file: UploadFile | None) -> str | None:
+    """Salva un'immagine (per gli avatar). Rifiuta i video. Ritorna il path o None."""
+    if file is None or not file.filename:
+        return None
+    path, kind = await save_upload(file)
+    if kind != "image":
+        delete_media(path)
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="L'immagine del profilo deve essere un'immagine (jpg, png, gif, webp).",
+        )
+    return path
+
+
 def delete_media(media_path: str | None) -> None:
     if not media_path:
         return

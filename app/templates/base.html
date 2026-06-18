@@ -39,10 +39,6 @@
       {% endif %}
     </nav>
     <div class="drawer-foot">
-      <button class="theme-toggle" id="themeToggle" type="button">
-        <span class="t-light">🌙 Tema scuro</span>
-        <span class="t-dark">☀️ Tema chiaro</span>
-      </button>
       {% if current_user %}
         <form method="post" action="/logout"><button class="btn-ghost" type="submit">Esci</button></form>
       {% else %}

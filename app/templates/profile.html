@@ -1,10 +1,10 @@
 {% extends "base.html" %}
-{% from "_macros.html" import post_card %}
+{% from "_macros.html" import post_card, avatar %}
 {% block title %}@{{ profile_user.username }} · Barsanti Connect{% endblock %}
 
 {% block content %}
 <section class="card profile-head">
-  <span class="avatar big">{{ profile_user.username[0]|upper }}</span>
+  {{ avatar(profile_user, 'big') }}
   <h1>@{{ profile_user.username }}
     {% if profile_user.is_admin %}<span class="badge">admin</span>{% endif %}
     {% if profile_user.is_banned %}<span class="badge danger">bannato</span>{% endif %}

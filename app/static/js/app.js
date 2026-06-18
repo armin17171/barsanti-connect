@@ -12,26 +12,44 @@
   if (menuBtn) menuBtn.addEventListener("click", openDrawer);
   if (overlay) overlay.addEventListener("click", closeDrawer);
 
-  // ---------- Toggle tema (persistente) ----------
-  function toggleTheme() {
-    var cur = document.documentElement.getAttribute("data-theme") || "light";
-    var next = cur === "light" ? "dark" : "light";
+  // ---------- Tema (persistente) ----------
+  // Presente solo in Home (switch) e Impostazioni (pulsante).
+  function currentTheme() {
+    return document.documentElement.getAttribute("data-theme") || "light";
+  }
+  function setTheme(next) {
     document.documentElement.setAttribute("data-theme", next);
     try { localStorage.setItem("bc-theme", next); } catch (e) {}
-  }
-  ["themeToggle", "themeToggle2"].forEach(function (id) {
-    var el = document.getElementById(id);
-    if (el) el.addEventListener("click", toggleTheme);
-  });
-
-  // ---------- Nome file selezionato nel composer ----------
-  var fileInput = document.querySelector('.composer input[type="file"]');
-  var fileName = document.getElementById("fileName");
-  if (fileInput && fileName) {
-    fileInput.addEventListener("change", function () {
-      fileName.textContent = fileInput.files.length ? fileInput.files[0].name : "";
+    document.querySelectorAll(".js-theme-checkbox").forEach(function (cb) {
+      cb.checked = next === "dark";
     });
   }
+  function toggleTheme() { setTheme(currentTheme() === "light" ? "dark" : "light"); }
+
+  // Pulsante (Impostazioni)
+  document.querySelectorAll(".js-theme-toggle").forEach(function (btn) {
+    btn.addEventListener("click", toggleTheme);
+  });
+  // Switch della luce (Home)
+  document.querySelectorAll(".js-theme-checkbox").forEach(function (cb) {
+    cb.checked = currentTheme() === "dark";
+    cb.addEventListener("change", function () {
+      setTheme(cb.checked ? "dark" : "light");
+    });
+  });
+
+  // ---------- Nome file selezionato (composer post + avatar) ----------
+  function bindFileName(inputSel, labelId) {
+    var input = document.querySelector(inputSel);
+    var label = document.getElementById(labelId);
+    if (input && label) {
+      input.addEventListener("change", function () {
+        label.textContent = input.files.length ? input.files[0].name : "";
+      });
+    }
+  }
+  bindFileName('.composer input[type="file"]', "fileName");
+  bindFileName("#avatarInput", "avatarName");
 
   // ---------- Like via fetch (con fallback al submit normale) ----------
   document.querySelectorAll(".like-form").forEach(function (form) {

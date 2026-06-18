@@ -212,6 +212,39 @@ textarea { resize: vertical; }
   background: linear-gradient(135deg, rgba(124,92,255,.18), rgba(90,141,238,.18));
 }
 
+/* ---------- Avatar immagine ---------- */
+img.avatar { object-fit: cover; }
+
+/* ---------- Switch della luce (Home) ---------- */
+.light-switch-card {
+  display: flex; align-items: center; justify-content: space-between;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 16px; box-shadow: var(--shadow);
+  padding: 10px 16px; margin-bottom: 16px;
+}
+.light-label { font-weight: 600; }
+.light-switch { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; }
+.light-switch input { display: none; }
+.ls-ico { font-size: 1rem; }
+.ls-track {
+  width: 52px; height: 28px; border-radius: 999px;
+  background: var(--surface-2); border: 1px solid var(--border);
+  position: relative; transition: background .2s;
+}
+.ls-thumb {
+  position: absolute; top: 2px; left: 2px; width: 22px; height: 22px;
+  border-radius: 50%; background: linear-gradient(135deg, var(--primary), var(--primary-2));
+  transition: left .2s; box-shadow: 0 1px 3px rgba(0,0,0,.25);
+}
+.light-switch input:checked + .ls-track { background: var(--primary); }
+.light-switch input:checked + .ls-track .ls-thumb { left: 26px; background: #fff; }
+
+/* ---------- Avatar nelle impostazioni ---------- */
+.avatar-edit { display: flex; align-items: center; gap: 16px; }
+.avatar-edit-controls { display: flex; flex-direction: column; gap: 8px; }
+.remove-avatar { font-size: .85rem; color: var(--muted); display: flex; align-items: center; gap: 6px; }
+.remove-avatar input { width: auto; margin: 0; }
+
 @media (min-width: 720px) {
   .content { max-width: 680px; }
 }

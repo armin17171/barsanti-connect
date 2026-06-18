@@ -5,7 +5,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
-from sqlalchemy import select
+from sqlalchemy import inspect, select, text
 from sqlalchemy.exc import OperationalError
 
 from .config import settings
@@ -30,6 +30,16 @@ def _wait_for_db(retries: int = 30, delay: float = 1.0) -> None:
             if attempt == retries:
                 raise
             time.sleep(delay)
+
+
+def _run_migrations() -> None:
+    """Migrazioni leggere e idempotenti per DB già esistenti (create_all non fa ALTER)."""
+    insp = inspect(engine)
+    if "users" in insp.get_table_names():
+        cols = {c["name"] for c in insp.get_columns("users")}
+        if "avatar_path" not in cols:
+            with engine.begin() as conn:
+                conn.execute(text("ALTER TABLE users ADD COLUMN avatar_path VARCHAR(255)"))
 
 
 def _seed_admin() -> None:
@@ -63,6 +73,7 @@ async def lifespan(app: FastAPI):
             os.makedirs(parent, exist_ok=True)
     _wait_for_db()
     Base.metadata.create_all(bind=engine)
+    _run_migrations()
     os.makedirs(settings.media_dir, exist_ok=True)
     _seed_admin()
     yield

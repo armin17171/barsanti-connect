@@ -1,11 +1,15 @@
-{% macro avatar(name) %}
-<span class="avatar">{{ name[0]|upper }}</span>
+{% macro avatar(user, extra='') %}
+{% if user.avatar_path %}
+<img class="avatar img {{ extra }}" src="/media/{{ user.avatar_path }}" alt="@{{ user.username }}">
+{% else %}
+<span class="avatar {{ extra }}">{{ user.username[0]|upper }}</span>
+{% endif %}
 {% endmacro %}
 
 {% macro post_card(post, current_user, liked_ids, show_comments=False) %}
 <article class="card post" id="post-{{ post.id }}">
   <header class="post-head">
-    {{ avatar(post.author.username) }}
+    {{ avatar(post.author) }}
     <div class="post-meta">
       <a class="username" href="/u/{{ post.author.username }}">@{{ post.author.username }}</a>
       <span class="time">{{ post.created_at|humantime }}</span>
@@ -60,7 +64,7 @@
   <section class="comments">
     {% for c in post.comments %}
     <div class="comment">
-      {{ avatar(c.author.username) }}
+      {{ avatar(c.author, 'small') }}
       <div>
         <a class="username small" href="/u/{{ c.author.username }}">@{{ c.author.username }}</a>
         <span class="time">{{ c.created_at|humantime }}</span>

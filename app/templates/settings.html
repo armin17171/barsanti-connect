@@ -7,7 +7,26 @@
 {% if message %}<div class="alert ok">{{ message }}</div>{% endif %}
 {% if error %}<div class="alert err">{{ error }}</div>{% endif %}
 
-<form class="card form" method="post" action="/settings">
+<form class="card form" method="post" action="/settings" enctype="multipart/form-data">
+  <h3>Immagine del profilo</h3>
+  <div class="avatar-edit">
+    {% if current_user.avatar_path %}
+      <img class="avatar big img" src="/media/{{ current_user.avatar_path }}" alt="avatar">
+    {% else %}
+      <span class="avatar big">{{ current_user.username[0]|upper }}</span>
+    {% endif %}
+    <div class="avatar-edit-controls">
+      <label class="file-label">📷 Scegli immagine
+        <input type="file" name="avatar" accept="image/*" hidden id="avatarInput">
+      </label>
+      <span class="file-name" id="avatarName"></span>
+      {% if current_user.avatar_path %}
+      <label class="remove-avatar"><input type="checkbox" name="remove_avatar" value="1"> Rimuovi foto attuale</label>
+      {% endif %}
+    </div>
+  </div>
+
+  <hr>
   <label class="field-label">Biografia</label>
   <textarea name="bio" rows="3" placeholder="Racconta qualcosa di te…">{{ current_user.bio }}</textarea>
 
@@ -24,7 +43,7 @@
 <section class="card form">
   <h3>Aspetto</h3>
   <p class="muted">Cambia tema in qualsiasi momento.</p>
-  <button class="theme-toggle big" id="themeToggle2" type="button">
+  <button class="theme-toggle big js-theme-toggle" type="button">
     <span class="t-light">🌙 Passa al tema scuro</span>
     <span class="t-dark">☀️ Passa al tema chiaro</span>
   </button>

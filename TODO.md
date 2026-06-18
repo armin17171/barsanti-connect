@@ -48,9 +48,14 @@ Legenda: `[x]` fatto e **testato** · `[ ]` da fare
 - [x] `CLAUDE.md` (contesto progetto)
 - [x] Pubblicazione su **GitHub** → https://github.com/armin17171/barsanti-connect (pubblico)
 
+## Aggiornamenti successivi
+- [x] **Immagine profilo** caricabile dagli utenti (upload/rimozione in Impostazioni, mostrata in feed/commenti/profilo/ricerca) — *test: `test_upload_and_show_avatar`, `test_reject_non_image_avatar`, `test_remove_avatar`*
+- [x] Migrazione idempotente `avatar_path` (nessuna perdita dati su DB esistente) — *verificato sul Postgres live*
+- [x] **Toggle tema solo in Home (switch della luce) e Impostazioni**, rimosso dal menu laterale — *verificato sul live*
+
 ---
 
 ### Esito ultima esecuzione test
 ```
-27 passed in 5.76s
+30 passed in 6.27s
 ```

@@ -1,9 +1,10 @@
-from fastapi import APIRouter, Depends, Form, Request
+from fastapi import APIRouter, Depends, File, Form, Request, UploadFile
 from sqlalchemy import or_
 from sqlalchemy.orm import Session as DBSession
 
 from ..database import get_db
 from ..deps import get_current_user, require_login
+from ..media import delete_media, save_image
 from ..models import (
     Comment,
     Confession,
@@ -135,17 +136,29 @@ def settings_page(request: Request, user: User = Depends(require_login)):
 
 
 @router.post("/settings")
-def update_settings(
+async def update_settings(
     request: Request,
     bio: str = Form(""),
     current_password: str = Form(""),
     new_password: str = Form(""),
+    avatar: UploadFile | None = File(None),
+    remove_avatar: str = Form(""),
     user: User = Depends(require_login),
     db: DBSession = Depends(get_db),
 ):
     user.bio = bio.strip()
     message = "Profilo aggiornato."
     error = None
+
+    # Immagine del profilo
+    if remove_avatar:
+        delete_media(user.avatar_path)
+        user.avatar_path = None
+    elif avatar is not None and avatar.filename:
+        new_path = await save_image(avatar)
+        if new_path:
+            delete_media(user.avatar_path)  # rimuove la vecchia
+            user.avatar_path = new_path
 
     if new_password:
         if not verify_password(current_password, user.password_hash):
